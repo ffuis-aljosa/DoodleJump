@@ -1,15 +1,19 @@
 package doodlejump;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import javax.imageio.ImageIO;
 
 public class DoodleGuy extends DoodleObject {
     private final int HORIZONTAL_SPEED = 10;
     
     private final int TELEPORT_BUFFER = 40;
+    
+    protected static BufferedImage image;
 
     public DoodleGuy(int panelWidth, int panelHeight) {
-        super(0, 0, 50, 80);
+        super(0, 0, 60, 59);
         
         this.x = (panelWidth - WIDTH) / 2;
         this.y = (panelHeight - HEIGHT) / 2;
@@ -49,14 +53,11 @@ public class DoodleGuy extends DoodleObject {
     
     @Override
     public void draw(Graphics2D g2D) {
-        g2D.setPaint(Color.BLACK);
-        g2D.fillRect(x, y, WIDTH, HEIGHT);
+        g2D.drawImage(image, x, y, WIDTH, HEIGHT, null);
     }
     
     @Override
     public void move() {
-        velocityY += GRAVITY;
-        
         super.move();
     }
     
@@ -66,5 +67,17 @@ public class DoodleGuy extends DoodleObject {
     
     public boolean isGoingDown() {
         return velocityY > 0;
+    }
+    
+    public static void loadImage() {
+        try {
+            String imagepath = "src/images/doodleGuy.png";
+            
+            System.out.println(imagepath);
+            
+            image = ImageIO.read(new File(imagepath));
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        }
     }
 }

@@ -18,6 +18,9 @@ public class DoodleFrame extends JFrame {
         dPanel = new DoodlePanel();
         add(dPanel);
         
+        DoodleGuy.loadImage();
+        DoodlePlatform.loadImage();
+        
         setVisible(true);
         
         dPanel.startGame();

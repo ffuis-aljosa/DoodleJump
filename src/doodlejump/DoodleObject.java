@@ -2,6 +2,9 @@ package doodlejump;
 
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import javax.imageio.ImageIO;
 
 public abstract class DoodleObject {
     protected int x;
@@ -12,7 +15,7 @@ public abstract class DoodleObject {
     protected int velocityX;
     protected int velocityY;
     
-    protected final int GRAVITY = 1;
+    public static final int GRAVITY = 1;
 
     public DoodleObject(int x, int y, int WIDTH, int HEIGHT) {
         this.x = x;
@@ -38,5 +41,9 @@ public abstract class DoodleObject {
         int lowerEdge = this.y + this.HEIGHT;
         
         return lowerEdge >= other.y && lowerEdge < other.y + other.HEIGHT;
+    }
+    
+    public void stopMoving() {
+        velocityY = 0;
     }
 }

@@ -30,6 +30,9 @@ public class DoodlePanel extends JPanel implements ActionListener, KeyListener {
     
     private final int FRAMES_BETWEEN_PLATFORMS = 5;
     private int framesSinceLastPlatform = 0;
+    
+    private boolean isDoodleGuyMoving;
+    private int velocityY;
 
     public DoodlePanel() {
         setBackground(Color.WHITE);
@@ -51,6 +54,8 @@ public class DoodlePanel extends JPanel implements ActionListener, KeyListener {
         dPlatforms.add(new DoodlePlatform(30, 100));
         dPlatforms.add(new DoodlePlatform(70, 200));
 
+        isDoodleGuyMoving = true;
+        
         gameStarted = true;
     }
 
@@ -70,33 +75,61 @@ public class DoodlePanel extends JPanel implements ActionListener, KeyListener {
             }
         }
     }
+    
+    private void bounce() {
+        System.out.println("BOUNCE!");
+        velocityY = -30;
+    }
 
     private void moveObjects() {
-        if (dGuy.y <= MAX_JUMP_HEIGHT) {
+        
+        System.out.println(velocityY);
+        
+        if (isDoodleGuyMoving && dGuy.y <= MAX_JUMP_HEIGHT) {
+            isDoodleGuyMoving = false;
+            velocityY = -velocityY;
+        } else if (!isDoodleGuyMoving && velocityY == 0) {
+            isDoodleGuyMoving = true;
+            velocityY = -velocityY;
+        }
+        
+        if (isDoodleGuyMoving) {
+            velocityY += DoodleGuy.GRAVITY;
+        } else {
+            velocityY -= DoodleGuy.GRAVITY;
+        }
+        
+        if (isDoodleGuyMoving) {
+            dGuy.velocityY = velocityY;
+            
+            for (DoodlePlatform dPlatform : dPlatforms) {
+                dPlatform.velocityY = 0;
+            }
+        } else {
+            dGuy.velocityY = 0;
+            
+            for (DoodlePlatform dPlatform : dPlatforms) {
+                dPlatform.velocityY = velocityY;
+            }
             
             if (framesSinceLastPlatform >= FRAMES_BETWEEN_PLATFORMS)
                 generatePlatform();
             else
                 framesSinceLastPlatform++;
-            
-            dGuy.velocityY = 0;
-            
-            for (DoodlePlatform dPlatform : dPlatforms) {
-                if (dPlatform.velocityY == 0)
-                    dPlatform.startMoving();
-                
-                dPlatform.move();
-            }
         }
         
         dGuy.move();
+        
+        for (DoodlePlatform dPlatform : dPlatforms) {
+            dPlatform.move();
+        }
     }
 
     private void handleCollisions() {
         Dimension size = this.getSize();
 
         if (dGuy.isAtBottom(size.height)) {
-            dGuy.bounce();
+            bounce();
         }
 
         if (dGuy.isMaxLeft()) {
@@ -110,7 +143,7 @@ public class DoodlePanel extends JPanel implements ActionListener, KeyListener {
 
             for (DoodlePlatform dPlatform : dPlatforms) {
                 if (dPlatform.getRectangle().intersects(dGuyRectangle) && dGuy.isIntersectingFromAbove(dPlatform)) {
-                    dGuy.bounce();
+                    bounce();
                 }
             }
         }
@@ -141,10 +174,12 @@ public class DoodlePanel extends JPanel implements ActionListener, KeyListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        moveObjects();
-        handleCollisions();
-        cleanUp();
-        repaint();
+        if (gameStarted) {
+            moveObjects();
+            handleCollisions();
+            cleanUp();
+            repaint();
+        }
     }
 
     @Override
