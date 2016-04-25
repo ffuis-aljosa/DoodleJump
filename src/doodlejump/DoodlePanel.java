@@ -2,6 +2,8 @@ package doodlejump;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
@@ -33,6 +35,8 @@ public class DoodlePanel extends JPanel implements ActionListener, KeyListener {
     
     private boolean isDoodleGuyMoving;
     private int velocityY;
+    
+    private Font mainFont;
 
     public DoodlePanel() {
         setBackground(Color.WHITE);
@@ -44,6 +48,8 @@ public class DoodlePanel extends JPanel implements ActionListener, KeyListener {
         addKeyListener(this);
         
         random = new Random();
+        
+        mainFont = new Font("Ariel", Font.BOLD, 22);
     }
 
     public void startGame() {
@@ -62,10 +68,9 @@ public class DoodlePanel extends JPanel implements ActionListener, KeyListener {
     @Override
     public void paint(Graphics g) {
         super.paint(g);
+        Graphics2D g2D = (Graphics2D) g;
 
         if (gameStarted) {
-            Graphics2D g2D = (Graphics2D) g;
-            
             g2D.drawLine(0, MAX_JUMP_HEIGHT, 400, MAX_JUMP_HEIGHT);
 
             dGuy.draw(g2D);
@@ -73,7 +78,21 @@ public class DoodlePanel extends JPanel implements ActionListener, KeyListener {
             for (DoodlePlatform dPlatform : dPlatforms) {
                 dPlatform.draw(g2D);
             }
+        } else {
+            drawMessage(g2D);
         }
+    }
+    
+    private void drawMessage(Graphics2D g2D) {
+        Dimension size = this.getSize();
+        
+        String message = "Doodle Jump";
+        
+        FontMetrics fontMetrics = g2D.getFontMetrics(mainFont);
+        int stringWidth = fontMetrics.stringWidth(message);
+        
+        g2D.setFont(mainFont);
+        g2D.drawString(message, size.width / 2 - stringWidth / 2, size.height / 2);
     }
     
     private void bounce() {

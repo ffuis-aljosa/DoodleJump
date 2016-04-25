@@ -1,6 +1,12 @@
 package doodlejump;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.Action;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 
 public class DoodleFrame extends JFrame {
     private final int FRAME_WIDTH = 400;
@@ -21,8 +27,31 @@ public class DoodleFrame extends JFrame {
         DoodleGuy.loadImage();
         DoodlePlatform.loadImage();
         
+        setJMenuBar(initMenu());
+        
         setVisible(true);
         
-        dPanel.startGame();
+    }
+    
+    private JMenuBar initMenu() {
+        JMenuBar menuBar = new JMenuBar();
+        
+        JMenu gameMenu = new JMenu("Game");
+        
+        JMenuItem startGameItem = new JMenuItem("Start game");
+        startGameItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dPanel.startGame();
+            }
+            
+        });
+        
+        gameMenu.add(startGameItem);
+        
+        menuBar.add(gameMenu);
+        
+        return menuBar;
     }
 }
